@@ -136,7 +136,7 @@ Durée approximative des boucles en millisecondes :
 - le port du serveur auquel vous êtes connectés : 443
 - le port que votre PC a ouvert en local pour se connecter au port du serveur distant : 57363
 
-[capture wireshark](/TP1/capture_youtube.pcap)
+[capture wireshark](/TP1/captures/capture_youtube.pcap)
 
 ---
 
@@ -233,7 +233,7 @@ Nmap done: 4096 IP addresses (863 hosts up) scanned in 201.50 seconds
 
 - 📁 fichier `arp.pcap`
 - capturez un échange ARP entre votre PC et la passerelle du réseau :
-  - [arp](./arp.pcap) avec le filtre "arp"
+  - [arp](./captures/arp.pcap) avec le filtre "arp"
 ---
 
 ☀️ **Capture DNS**
@@ -241,7 +241,7 @@ Nmap done: 4096 IP addresses (863 hosts up) scanned in 201.50 seconds
 - 📁 fichier `dns.pcap`
 - capturez une requête DNS vers le domaine de votre choix et la réponse
 - vous effectuerez la requête DNS en ligne de commande
-  - [dns](./dns.pcap) avec le filtre "dns"
+  - [dns](./captures/dns.pcap) avec le filtre "dns"
 
 ---
 
@@ -249,6 +249,6 @@ Nmap done: 4096 IP addresses (863 hosts up) scanned in 201.50 seconds
 
 - 📁 fichier `tcp.pcap`
 - effectuez une connexion qui sollicite le protocole TCP
-  - [tcp](./tcp.pcapng) avec le filtre tcp
+  - [tcp](./tcp/captures.pcapng) avec le filtre tcp
 
 ---
