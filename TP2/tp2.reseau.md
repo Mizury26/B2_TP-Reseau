@@ -637,7 +637,7 @@ web.lan2.tp1.lab.ingesup
   ```
   - prouvez que le firewall est bien configuré
   ```bash
-  [manon@web ~]$ sudo firewall-cmd --permanent --list-all
+  [manon@web ~]$ sudo firewall-cmd --list-all
   public
   target: default
   icmp-block-inversion: no
