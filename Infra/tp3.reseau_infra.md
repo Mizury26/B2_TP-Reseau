@@ -81,6 +81,19 @@ PC1> ping 10.3.1.2
 84 bytes from 10.3.1.2 icmp_seq=1 ttl=64 time=0.166 ms
 84 bytes from 10.3.1.2 icmp_seq=2 ttl=64 time=0.296 ms
 ```
+- afficher la CAM table du switch et vérifier les MAC qui s'y trouvent (Google pour ça, c'est pas dans le mémo) 
+```bash
+
+IOU1#show mac address-table
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+   1    0800.27fc.5e8a    DYNAMIC     Et1/1
+Total Mac Addresses for this criterion: 1
+
+```
 
 # II. VLAN
 
