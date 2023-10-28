@@ -15,4 +15,4 @@
 
 ### [Dev](./TP2)
 
-- [TP3](./Dev/tp3_reseau_dev.md)
+- [TP3](./Dev/tp3/README.md)
