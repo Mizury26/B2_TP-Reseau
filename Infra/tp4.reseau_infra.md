@@ -530,13 +530,613 @@ Vous pouvez partir de la topologie 2.
 
 - de tous les équipements réseau
   - le routeur
+```bash
+R1#show run
+Building configuration...
+
+Current configuration : 1630 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+!
+!
+no ip domain lookup
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+archive
+ log config
+  hidekeys
+!
+!
+!
+!
+ip tcp synwait-time 5
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ ip nat inside
+ ip virtual-reassembly
+ speed auto
+ full-duplex
+!
+interface FastEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 10.1.10.254 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 10.1.20.254 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 10.1.30.254 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet0/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet1/0 overload
+!
+access-list 1 permit any
+no cdp log mismatch duplex
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login
+!
+!
+end
+```
+
   - les 3 switches
 
-> N'oubliez pas les VLANs sur tous les switches.
+  **Switch 1 :**
+  ```bash
+  IOU3#show run
+  Building configuration...
 
-🖥️ **VM `dhcp1.client1.tp4`**, déroulez la [Checklist VM Linux](#checklist-vm-linux) dessus
+  Current configuration : 1484 bytes
+  !
+  ! Last configuration change at 13:28:44 UTC Sun Nov 12 2023
+  !
+  version 15.2
+  service timestamps debug datetime msec
+  service timestamps log datetime msec
+  no service password-encryption
+  service compress-config
+  !
+  hostname IOU3
+  !
+  boot-start-marker
+  boot-end-marker
+  !
+  !
+  logging discriminator EXCESS severity drops 6 msg-body drops  EXCESSCOLL
+  logging buffered 50000
+  logging console discriminator EXCESS
+  !
+  no aaa new-model
+  !
+  !
+  !
+  !
+  !
+  no ip icmp rate-limit unreachable
+  !
+  !
+  !
+  no ip domain-lookup
+  ip cef
+  no ipv6 cef
+  !
+  !
+  !
+  spanning-tree mode pvst
+  spanning-tree extend system-id
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  interface Ethernet0/0
+   switchport trunk encapsulation dot1q
+   switchport mode trunk
+  !
+  interface Ethernet0/1
+  !
+  interface Ethernet0/2
+  !
+  interface Ethernet0/3
+  !
+  interface Ethernet1/0
+  !
+  interface Ethernet1/1
+  !
+  interface Ethernet1/2
+  !
+  interface Ethernet1/3
+  !
+  interface Ethernet2/0
+  !
+  interface Ethernet2/1
+  !
+  interface Ethernet2/2
+  !
+  interface Ethernet2/3
+  !
+  interface Ethernet3/0
+  !
+  interface Ethernet3/1
+  !
+  interface Ethernet3/2
+  !
+  interface Ethernet3/3
+  !
+  interface Vlan1
+   no ip address
+   shutdown
+  !
+  ip forward-protocol nd
+  !
+  ip tcp synwait-time 5
+  ip http server
+  !
+  ip ssh server algorithm encryption aes128-ctr aes192-ctr  aes256-ctr
+  ip ssh client algorithm encryption aes128-ctr aes192-ctr  aes256-ctr
+  !
+  !
+  !
+  !
+  !
+  control-plane
+  !
+  !
+  line con 0
+   exec-timeout 0 0
+   privilege level 15
+   logging synchronous
+  line aux 0
+   exec-timeout 0 0
+   privilege level 15
+   logging synchronous
+  line vty 0 4
+   login
+  !
+  !
+  !
+  end
+  ```
+  **Switch :**
+  ```bash
+  IOU1#show run
+  Building configuration...
+
+  Current configuration : 1739 bytes
+  !
+  ! Last configuration change at 12:59:25 UTC Sun Nov 12 2023
+  !
+  version 15.2
+  service timestamps debug datetime msec
+  service timestamps log datetime msec
+  no service password-encryption
+  service compress-config
+  !
+  hostname IOU1
+  !
+  boot-start-marker
+  boot-end-marker
+  !
+  !
+  logging discriminator EXCESS severity drops 6 msg-body drops  EXCESSCOLL
+  logging buffered 50000
+  logging console discriminator EXCESS
+  !
+  no aaa new-model
+  !
+  !
+  !
+  !
+  !
+  no ip icmp rate-limit unreachable
+  !
+  !
+  !
+  no ip domain-lookup
+  ip cef
+  no ipv6 cef
+  !
+  !
+  !
+  spanning-tree mode pvst
+  spanning-tree extend system-id
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  interface Ethernet0/0
+   switchport trunk encapsulation dot1q
+   switchport mode trunk
+  !
+  interface Ethernet0/1
+   switchport access vlan 10
+   switchport mode access
+  !
+  interface Ethernet0/2
+   switchport access vlan 10
+   switchport mode access
+  !
+  interface Ethernet0/3
+   switchport access vlan 20
+   switchport mode access
+  !
+  interface Ethernet1/0
+   switchport access vlan 30
+   switchport mode access
+  !
+  interface Ethernet1/1
+   switchport access vlan 30
+   switchport mode access
+  !
+  interface Ethernet1/2
+  !
+  interface Ethernet1/3
+  !
+  interface Ethernet2/0
+  !
+  interface Ethernet2/1
+  !
+  interface Ethernet2/2
+  !
+  interface Ethernet2/3
+  !
+  interface Ethernet3/0
+  !
+  interface Ethernet3/1
+  !
+  interface Ethernet3/2
+  !
+  interface Ethernet3/3
+  !
+  interface Vlan1
+   no ip address
+   shutdown
+  !
+  ip forward-protocol nd
+  !
+  ip tcp synwait-time 5
+  ip http server
+  !
+  ip ssh server algorithm encryption aes128-ctr aes192-ctr  aes256-ctr
+  ip ssh client algorithm encryption aes128-ctr aes192-ctr  aes256-ctr
+  !
+  !
+  !
+  !
+  !
+  control-plane
+  !
+  !
+  line con 0
+   exec-timeout 0 0
+   privilege level 15
+   logging synchronous
+  line aux 0
+   exec-timeout 0 0
+   privilege level 15
+   logging synchronous
+  line vty 0 4
+   login
+  !
+  !
+  !
+  end
+  ```
+  **Switch 3 :**
+  ```bash
+  IOU2#show run
+  Building configuration...
+
+  Current configuration : 1637 bytes
+  !
+  ! Last configuration change at 13:45:13 UTC Sun Nov 12 2023
+  !
+  version 15.2
+  service timestamps debug datetime msec
+  service timestamps log datetime msec
+  no service password-encryption
+  service compress-config
+  !
+  hostname IOU2
+  !
+  boot-start-marker
+  boot-end-marker
+  !
+  !
+  logging discriminator EXCESS severity drops 6 msg-body drops  EXCESSCOLL
+  logging buffered 50000
+  logging console discriminator EXCESS
+  !
+  no aaa new-model
+  !
+  !
+  !
+  !
+  !
+  no ip icmp rate-limit unreachable
+  !
+  !
+  !
+  no ip domain-lookup
+  ip cef
+  no ipv6 cef
+  !
+  !
+  !
+  spanning-tree mode pvst
+  spanning-tree extend system-id
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  !
+  interface Ethernet0/0
+   switchport trunk encapsulation dot1q
+   switchport mode trunk
+  !
+  interface Ethernet0/1
+   switchport access vlan 10
+   switchport mode access
+  !
+  interface Ethernet0/2
+   switchport access vlan 10
+   switchport mode access
+  !
+  interface Ethernet0/3
+   switchport access vlan 10
+   switchport mode access
+  !
+  interface Ethernet1/0
+  switchport access vlan 10
+  switchport mode access
+  !
+  interface Ethernet1/1
+  !
+  interface Ethernet1/2
+  !
+  interface Ethernet1/3
+  !
+  interface Ethernet2/0
+  !
+  interface Ethernet2/1
+  !
+  interface Ethernet2/2
+  !
+  interface Ethernet2/3
+  !
+  interface Ethernet3/0
+  !
+  interface Ethernet3/1
+  !
+  interface Ethernet3/2
+  !
+  interface Ethernet3/3
+  !
+  interface Vlan1
+   no ip address
+   shutdown
+  !
+  ip forward-protocol nd
+  !
+  ip tcp synwait-time 5
+  ip http server
+  !
+  ip ssh server algorithm encryption aes128-ctr aes192-ctr  aes256-ctr
+  ip ssh client algorithm encryption aes128-ctr aes192-ctr  aes256-ctr
+  !
+  !
+  !
+  !
+  !
+  control-plane
+  !
+  !
+  line con 0
+   exec-timeout 0 0
+   privilege level 15
+   logging synchronous
+  line aux 0
+   exec-timeout 0 0
+   privilege level 15
+   logging synchronous
+  line vty 0 4
+   login
+  !
+  !
+  !
+  end
+  ```
+
 
 🌞  **Mettre en place un serveur DHCP dans le nouveau bâtiment**
+
+```bash
+[manon@dhcp ~]$ sudo dnf install dhcp-server -y
+
+[manon@dhcp ~]$ sudo cat /etc/dhcp/dhcpd.conf
+# DHCP Server Configuration file.
+# create new
+# specify domain name
+option domain-name     "srv.world";
+# specify DNS server's hostname or IP address
+option domain-name-servers     1.1.1.1;
+# default lease time
+default-lease-time 600;
+# max lease time
+max-lease-time 7200;
+# this DHCP server to be declared valid
+authoritative;
+# specify network address and subnetmask
+subnet 10.1.10.0 netmask 255.255.255.0 {
+    # specify the range of lease IP address
+    range dynamic-bootp 10.1.10.3 10.1.10.252;
+    # specify broadcast address
+    option broadcast-address 10.1.10.255;
+    # specify gateway
+    option routers 10.1.10.254;
+  }
+```
+```bash
+[manon@dhcp ~]$ sudo systemctl enable --now dhcpd
+[sudo] password for manon:
+Created symlink /etc/systemd/system/multi-user.target.wants/dhcpd.service → /usr/lib/systemd/system/dhcpd.service.
+[manon@dhcp ~]$ sudo firewall-cmd --add-service=dhcp
+success
+[manon@dhcp ~]$ sudo firewall-cmd --runtime-to-permanent
+success
+[manon@dhcp ~]$ systemctl status dhcpd
+● dhcpd.service - DHCPv4 Server Daemon
+     Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; enabled; preset: disabled)
+     Active: active (running) since Sun 2023-11-12 16:38:14 CET; 17s ago
+       Docs: man:dhcpd(8)
+             man:dhcpd.conf(5)
+   Main PID: 1355 (dhcpd)
+     Status: "Dispatching packets..."
+      Tasks: 1 (limit: 11052)
+     Memory: 7.1M
+        CPU: 11ms
+     CGroup: /system.slice/dhcpd.service
+             └─1355 /usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid
+
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]: ** Ignoring requests on enp0s8.  If this is not what
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]:    you want, please write a subnet declaration
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]:    in your dhcpd.conf file for the network segment
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]:    to which interface enp0s8 is attached. **
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]:
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]: Listening on LPF/enp0s3/08:00:27:fc:5e:8a/10.1.10.0/24
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]: Sending on   LPF/enp0s3/08:00:27:fc:5e:8a/10.1.10.0/24
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]: Sending on   Socket/fallback/fallback-net
+Nov 12 16:38:14 dhcp.tp4.b2 dhcpd[1355]: Server starting service.
+Nov 12 16:38:14 dhcp.tp4.b2 systemd[1]: Started DHCPv4 Server Daemon.
+```
 
 - il doit distribuer des IPs aux clients dans le réseau `clients` qui sont branchés au même switch que lui
 - sans aucune action manuelle, les clients doivent...
@@ -545,7 +1145,6 @@ Vous pouvez partir de la topologie 2.
   - avoir un accès WAN
   - avoir de la résolution DNS
 
-> Réutiliser un serveur DHCP qu'on a monté dans un autre TP si vous avez.
 
 🌞  **Vérification**
 
@@ -556,4 +1155,36 @@ Vous pouvez partir de la topologie 2.
 
 > Faites ça sur n'importe quel VPCS que vous venez d'ajouter : `pc3` ou `pc4` ou `pc5`.
 
-![DC Archi](../img/dc_archi.png)
+```bash
+PC3> ip dhcp
+DDORA IP 10.1.10.3/24 GW 10.1.10.254
+
+PC3> sh ip
+
+NAME        : PC3[1]
+IP/MASK     : 10.1.10.3/24
+GATEWAY     : 10.1.10.254
+DNS         : 1.1.1.1
+DHCP SERVER : 10.1.10.253
+DHCP LEASE  : 594, 600/300/525
+DOMAIN NAME : srv.world
+MAC         : 00:50:79:66:68:0a
+LPORT       : 20029
+RHOST:PORT  : 127.0.0.1:20030
+MTU         : 1500
+
+PC3> ping 1.1.1.1
+
+1.1.1.1 icmp_seq=1 timeout
+^C
+PC3> ping ynov.com
+ynov.com resolved to 104.26.11.233
+
+ynov.com icmp_seq=1 timeout
+^C
+PC3> ping 10.1.30.1
+
+84 bytes from 10.1.30.1 icmp_seq=1 ttl=63 time=22.375 ms
+84 bytes from 10.1.30.1 icmp_seq=2 ttl=63 time=18.063 ms
+^C
+```
