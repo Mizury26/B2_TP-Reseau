@@ -12,6 +12,7 @@
 ### [Infra](./infra)
 
 - [TP3](./Infra/tp3.reseau_infra.md)
+- [TP4](./Infra/tp4.reseau_infra.md)
 
 ### [Dev](./TP2)
 
