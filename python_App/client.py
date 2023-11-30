@@ -28,7 +28,7 @@ try:
 
     # Create handlers
     c_handler = logging.StreamHandler()
-    f_handler = logging.FileHandler(r"C:\Users\Utilisateur\Documents\B2_info\Reseau_b2\B2_TP-Reseau\python_App")
+    f_handler = logging.FileHandler('/var/log/bs_client/bs_client.log')
     c_handler.setLevel(logging.ERROR)  # Set to DEBUG to ensure all levels are logged to console
     f_handler.setLevel(logging.DEBUG)  # Set to DEBUG to ensure all levels are logged to file
 
