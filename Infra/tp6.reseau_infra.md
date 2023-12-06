@@ -941,6 +941,20 @@ R1(config)#interface fastEthernet 2/0 # interface qui va recevoir des requêtes 
 R1(config-if)#ip helper-address <DHCP_SERVER_IP_ADDRESS>
 ```
 
+```bash
+[manon@dhcp ~]$ sudo cat /var/log/messages | grep john
+Dec  6 22:08:26 dhcp dhcpd[808]: DHCPDISCOVER from 00:50:79:66:68:02 (john.tp6.b1) via 10.6.3.254
+Dec  6 22:08:26 dhcp dhcpd[808]: DHCPOFFER on 10.6.3.100 to 00:50:79:66:68:02 (john.tp6.b1) via 10.6.3.254
+Dec  6 22:08:29 dhcp dhcpd[808]: DHCPREQUEST for 10.6.3.100 (10.6.1.253) from 00:50:79:66:68:02 (john.tp6.b1) via 10.6.3.254
+Dec  6 22:08:29 dhcp dhcpd[808]: DHCPACK on 10.6.3.100 to 00:50:79:66:68:02 (john.tp6.b1) via 10.6.3.254
+
+[manon@dhcp ~]$ sudo cat /var/log/messages | grep waf
+Dec  6 22:16:03 dhcp dhcpd[808]: DHCPDISCOVER from 00:50:79:66:68:00 (waf.tp6.b1) via enp0s8
+Dec  6 22:16:03 dhcp dhcpd[808]: DHCPOFFER on 10.6.1.100 to 00:50:79:66:68:00 (waf.tp6.b1) via enp0s8
+Dec  6 22:16:04 dhcp dhcpd[808]: DHCPREQUEST for 10.6.1.100 (10.6.1.253) from 00:50:79:66:68:00 (waf.tp6.b1) via enp0s8
+Dec  6 22:16:04 dhcp dhcpd[808]: DHCPACK on 10.6.1.100 to 00:50:79:66:68:00 (waf.tp6.b1) via enp0s8
+```
+
 ## IV. Bonus
 
 ### 1. ACL
