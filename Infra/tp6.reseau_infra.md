@@ -357,7 +357,7 @@ waf.tp6.b1> sh ip
 NAME        : waf.tp6.b1[1]
 IP/MASK     : 10.6.1.11/24
 GATEWAY     : 10.6.1.254
-DNS         :
+DNS         : 1.1.1.1
 MAC         : 00:50:79:66:68:02
 LPORT       : 20004
 RHOST:PORT  : 127.0.0.1:20005
@@ -368,7 +368,7 @@ dhcp.tp6.b1> sh ip
 NAME        : dhcp.tp6.b1[1]
 IP/MASK     : 10.6.1.253/24
 GATEWAY     : 10.6.1.254
-DNS         :
+DNS         : 1.1.1.1
 MAC         : 00:50:79:66:68:03
 LPORT       : 20002
 RHOST:PORT  : 127.0.0.1:20003
@@ -379,7 +379,7 @@ meo.tp6.b1> sh ip
 NAME        : meo.tp6.b1[1]
 IP/MASK     : 10.6.2.11/24
 GATEWAY     : 10.6.2.254
-DNS         :
+DNS         : 1.1.1.1
 MAC         : 00:50:79:66:68:00
 LPORT       : 20006
 RHOST:PORT  : 127.0.0.1:20007
@@ -390,7 +390,7 @@ john.tp6.b1> sh ip
 NAME        : john.tp6.b1[1]
 IP/MASK     : 10.6.3.11/24
 GATEWAY     : 10.6.3.254
-DNS         :
+DNS         : 1.1.1.1
 MAC         : 00:50:79:66:68:01
 LPORT       : 20008
 RHOST:PORT  : 127.0.0.1:20009
@@ -448,8 +448,321 @@ OSPF donc.
 - tous les routeurs doivent partager tous les réseaux auxquels ils sont connectés
 - un petit `show running-config` où vous enlevez ce que vous n'avez pas tapé pour le rendu !
 - et un `show ip ospf neighbor` + `show ip route` sur chaque routeur
+- n'oubliez pas de partager la route par défaut de R5 avec une commande OSPF spécifique [voir mémo](../../../cours/memo/cisco.md)
 
-> Référez-vous [au mémo Cisco](../../../cours/memo/cisco.md) pour les commandes OSPF.
+```bash
+R5(config)#router ospf 1
+R5(config-router)#default-information originate always
+R5(config-router)#exit
+R5(config)#exit
+```
+
+```bash
+R1#show running-config
+Building configuration...
+interface FastEthernet0/0
+ ip address 10.6.21.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.6.13.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ ip address 10.6.41.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ ip address 10.6.3.254 255.255.255.0
+ duplex auto
+ speed auto
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+ network 10.6.3.0 0.0.0.255 area 2
+ network 10.6.13.0 0.0.0.3 area 0
+ network 10.6.21.0 0.0.0.3 area 0
+ network 10.6.41.0 0.0.0.3 area 3
+
+R1#show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/BDR        00:00:35    10.6.21.2       FastEthernet0/0
+3.3.3.3           1   FULL/BDR        00:00:32    10.6.13.2       FastEthernet0/1
+4.4.4.4           1   FULL/BDR        00:00:39    10.6.41.2       FastEthernet1/0
+
+R1#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     10.0.0.0/8 is variably subnetted, 8 subnets, 2 masks
+C       10.6.13.0/30 is directly connected, FastEthernet0/1
+O       10.6.1.0/24 [110/11] via 10.6.41.2, 00:21:22, FastEthernet1/0
+O       10.6.2.0/24 [110/2] via 10.6.41.2, 00:21:22, FastEthernet1/0
+C       10.6.3.0/24 is directly connected, FastEthernet2/0
+C       10.6.21.0/30 is directly connected, FastEthernet0/0
+O       10.6.23.0/30 [110/20] via 10.6.21.2, 00:25:59, FastEthernet0/0
+                     [110/20] via 10.6.13.2, 00:23:23, FastEthernet0/1
+C       10.6.41.0/30 is directly connected, FastEthernet1/0
+O IA    10.6.52.0/30 [110/11] via 10.6.21.2, 00:25:33, FastEthernet0/0
+```
+```bash
+R2#show running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address 10.6.21.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.6.23.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ ip address 10.6.52.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ duplex auto
+ speed auto
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+ network 10.6.21.0 0.0.0.3 area 0
+ network 10.6.23.0 0.0.0.3 area 0
+ network 10.6.52.0 0.0.0.3 area 1
+
+R2#show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+3.3.3.3           1   FULL/BDR        00:00:32    10.6.23.1       FastEthernet0/1
+1.1.1.1           1   FULL/DR         00:00:35    10.6.21.1       FastEthernet0/0
+5.5.5.5           1   FULL/BDR        00:00:39    10.6.52.1       FastEthernet1/0
+
+R2#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     10.0.0.0/8 is variably subnetted, 8 subnets, 2 masks
+O       10.6.13.0/30 [110/20] via 10.6.23.1, 00:25:59, FastEthernet0/1
+                     [110/20] via 10.6.21.1, 00:28:13, FastEthernet0/0
+O IA    10.6.1.0/24 [110/21] via 10.6.21.1, 00:23:58, FastEthernet0/0
+O IA    10.6.2.0/24 [110/12] via 10.6.21.1, 00:23:58, FastEthernet0/0
+O IA    10.6.3.0/24 [110/11] via 10.6.21.1, 00:28:13, FastEthernet0/0
+C       10.6.21.0/30 is directly connected, FastEthernet0/0
+C       10.6.23.0/30 is directly connected, FastEthernet0/1
+O IA    10.6.41.0/30 [110/11] via 10.6.21.1, 00:28:14, FastEthernet0/0
+C       10.6.52.0/30 is directly connected, FastEthernet1/0
+```
+```bash
+R3#show running-config
+Building configuration...
+interface FastEthernet0/0
+ ip address 10.6.13.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.6.23.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ duplex auto
+ speed auto
+!
+router ospf 1
+ router-id 3.3.3.3
+ log-adjacency-changes
+ network 10.6.13.0 0.0.0.3 area 0
+ network 10.6.23.0 0.0.0.3 area 0
+!
+
+R3#show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/DR         00:00:33    10.6.23.2       FastEthernet0/1
+1.1.1.1           1   FULL/DR         00:00:31    10.6.13.1       FastEthernet0/0
+
+R3#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     10.0.0.0/8 is variably subnetted, 8 subnets, 2 masks
+C       10.6.13.0/30 is directly connected, FastEthernet0/0
+O IA    10.6.1.0/24 [110/21] via 10.6.13.1, 00:28:41, FastEthernet0/0
+O IA    10.6.2.0/24 [110/12] via 10.6.13.1, 00:28:41, FastEthernet0/0
+O IA    10.6.3.0/24 [110/11] via 10.6.13.1, 00:31:11, FastEthernet0/0
+O       10.6.21.0/30 [110/20] via 10.6.23.2, 00:30:42, FastEthernet0/1
+                     [110/20] via 10.6.13.1, 00:31:11, FastEthernet0/0
+C       10.6.23.0/30 is directly connected, FastEthernet0/1
+O IA    10.6.41.0/30 [110/11] via 10.6.13.1, 00:31:12, FastEthernet0/0
+O IA    10.6.52.0/30 [110/11] via 10.6.23.2, 00:30:44, FastEthernet0/1
+```
+```bash
+R4#show running-config
+Building configuration...
+interface FastEthernet0/0
+ ip address 10.6.41.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.6.1.254 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ ip address 10.6.2.254 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ duplex auto
+ speed auto
+!
+router ospf 1
+ router-id 4.4.4.4
+ log-adjacency-changes
+ network 10.6.1.0 0.0.0.255 area 3
+ network 10.6.2.0 0.0.0.255 area 3
+ network 10.6.41.0 0.0.0.3 area 3
+!
+
+R4#show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1           1   FULL/DR         00:00:32    10.6.41.1       FastEthernet0/0
+
+R4#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     10.0.0.0/8 is variably subnetted, 8 subnets, 2 masks
+O IA    10.6.13.0/30 [110/20] via 10.6.41.1, 00:31:31, FastEthernet0/0
+C       10.6.1.0/24 is directly connected, FastEthernet0/1
+C       10.6.2.0/24 is directly connected, FastEthernet1/0
+O IA    10.6.3.0/24 [110/11] via 10.6.41.1, 00:31:31, FastEthernet0/0
+O IA    10.6.21.0/30 [110/20] via 10.6.41.1, 00:31:31, FastEthernet0/0
+O IA    10.6.23.0/30 [110/30] via 10.6.41.1, 00:31:31, FastEthernet0/0
+C       10.6.41.0/30 is directly connected, FastEthernet0/0
+O IA    10.6.52.0/30 [110/21] via 10.6.41.1, 00:31:32, FastEthernet0/0
+```
+```bash
+R5#show running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.6.52.1 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ duplex auto
+ speed auto
+!
+router ospf 1
+ router-id 5.5.5.5
+ log-adjacency-changes
+ network 10.6.52.0 0.0.0.3 area 1
+ default-information originate always
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet0/0 overload
+!
+access-list 1 permit any
+
+R5#show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/DR         00:00:37    10.6.52.2       FastEthernet0/1
+
+R5#show ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is 192.168.122.1 to network 0.0.0.0
+
+C    192.168.122.0/24 is directly connected, FastEthernet0/0
+     10.0.0.0/8 is variably subnetted, 8 subnets, 2 masks
+O IA    10.6.13.0/30 [110/30] via 10.6.52.2, 00:35:27, FastEthernet0/1
+O IA    10.6.1.0/24 [110/31] via 10.6.52.2, 00:35:27, FastEthernet0/1
+O IA    10.6.2.0/24 [110/22] via 10.6.52.2, 00:35:27, FastEthernet0/1
+O IA    10.6.3.0/24 [110/21] via 10.6.52.2, 00:35:27, FastEthernet0/1
+O IA    10.6.21.0/30 [110/20] via 10.6.52.2, 00:35:27, FastEthernet0/1
+O IA    10.6.23.0/30 [110/20] via 10.6.52.2, 00:35:29, FastEthernet0/1
+O IA    10.6.41.0/30 [110/21] via 10.6.52.2, 00:35:29, FastEthernet0/1
+C       10.6.52.0/30 is directly connected, FastEthernet0/1
+S*   0.0.0.0/0 [254/0] via 192.168.122.1
+```
 
 🌞 **Test**
 
@@ -458,12 +771,70 @@ OSPF donc.
 - et même tout le monde a internet y compris les clients
 - mettez moi quelques `ping` dans le compte-rendu
 
+```bash
+waf.tp6.b1> ping 10.6.3.11
+
+10.6.3.11 icmp_seq=1 timeout
+84 bytes from 10.6.3.11 icmp_seq=2 ttl=62 time=40.823 ms
+84 bytes from 10.6.3.11 icmp_seq=3 ttl=62 time=37.708 ms
+84 bytes from 10.6.3.11 icmp_seq=4 ttl=62 time=32.570 ms
+^C
+waf.tp6.b1> ping 10.6.41.1
+
+84 bytes from 10.6.41.1 icmp_seq=1 ttl=254 time=29.899 ms
+84 bytes from 10.6.41.1 icmp_seq=2 ttl=254 time=24.158 ms
+^C
+waf.tp6.b1> ping 10.6.21.2
+
+84 bytes from 10.6.21.2 icmp_seq=1 ttl=253 time=51.048 ms
+84 bytes from 10.6.21.2 icmp_seq=2 ttl=253 time=51.698 ms
+^C
+
+meo.tp6.b1> ping 10.6.1.253
+
+10.6.1.253 icmp_seq=1 timeout
+10.6.1.253 icmp_seq=2 timeout
+10.6.1.253 icmp_seq=3 timeout
+10.6.1.253 icmp_seq=4 timeout
+
+R5#ping 10.6.2.11
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.6.2.11, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 28/55/76 ms
+
+R4#ping 10.6.21.1
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.6.21.1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 8/16/24 ms
+
+[manon@dhcp network-scripts]$ ping 10.6.21.1
+PING 10.6.21.1 (10.6.21.1) 56(84) bytes of data.
+64 bytes from 10.6.21.1: icmp_seq=1 ttl=254 time=25.6 ms
+64 bytes from 10.6.21.1: icmp_seq=2 ttl=254 time=23.2 ms
+
+waf.tp6.b1> ping google.com
+google.com resolved to 142.250.179.78
+
+R2#ping 1.1.1.1
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 1.1.1.1, timeout is 2 seconds:
+.!!!!
+Success rate is 80 percent (4/5), round-trip min/avg/max = 64/119/208 ms
+```
+
 🦈 **`tp6_ospf.pcapng`**
 
 - capturez des BPDUs là où vous voulez
 - interprétez les BPDUs
 
 > *Un BPDU c'est juste le nom qu'on donne à une trame OSPF échangée entre deux routeurs.*
+
+[capture OSPF](./capture/tp6_ospf.pcapng)
 
 ## III. DHCP relay
 
@@ -497,6 +868,65 @@ Si t'as un serveur DHCP, et plein de réseaux comme c'est le cas ici, c'est le b
   - `sudo cat /etc/dhcp/dhcpd.conf`
   - `systemctl status dhcpd`
 
+```bash
+[manon@dhcp ~]$ sudo cat /etc/dhcp/dhcpd.conf
+#
+# DHCP Server Configuration file.
+#   see /usr/share/doc/dhcp-server/dhcpd.conf.example
+#   see dhcpd.conf(5) man page
+# create new
+# specify domain name
+option domain-name     "srv.world";
+# specify DNS server's hostname or IP address
+option domain-name-servers     1.1.1.1;
+# default lease time
+default-lease-time 600;
+# max lease time
+max-lease-time 7200;
+# this DHCP server to be declared valid
+authoritative;
+# specify network address and subnetmask
+subnet 10.6.1.0 netmask 255.255.255.0 {
+    # specify the range of lease IP address
+    range dynamic-bootp 10.6.1.100 10.6.1.200;
+    # specify broadcast address
+    option broadcast-address 10.6.1.255;
+    # specify gateway
+    option routers 10.6.52.1;
+}
+subnet 10.6.3.0 netmask 255.255.255.0 {
+    range dynamic-bootp 10.6.3.100 10.6.3.200;
+    option broadcast-address 10.6.3.255;
+    option routers 10.6.52.1;
+}
+```
+```bash
+[manon@dhcp ~]$ systemctl status dhcpd
+● dhcpd.service - DHCPv4 Server Daemon
+     Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; enabled; preset: disabled)
+     Active: active (running) since Wed 2023-12-06 18:47:54 CET; 48s ago
+       Docs: man:dhcpd(8)
+             man:dhcpd.conf(5)
+   Main PID: 11510 (dhcpd)
+     Status: "Dispatching packets..."
+      Tasks: 1 (limit: 11039)
+     Memory: 4.6M
+        CPU: 7ms
+     CGroup: /system.slice/dhcpd.service
+             └─11510 /usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid
+
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]:
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]: No subnet declaration for enp0s3 (no IPv4 addresses).
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]: ** Ignoring requests on enp0s3.  If this is not what
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]:    you want, please write a subnet declaration
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]:    in your dhcpd.conf file for the network segment
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]:    to which interface enp0s3 is attached. **
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]:
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]: Sending on   Socket/fallback/fallback-net
+Dec 06 18:47:54 dhcp.tp6.b1 dhcpd[11510]: Server starting service.
+Dec 06 18:47:54 dhcp.tp6.b1 systemd[1]: Started DHCPv4 Server Daemon.
+```
+
 🌞 **Configurer un DHCP relay sur la passerelle de John**
 
 - vérifier que Waf et John peuvent récupérer une IP en DHCP
@@ -510,8 +940,6 @@ R1#conf t
 R1(config)#interface fastEthernet 2/0 # interface qui va recevoir des requêtes DHCP
 R1(config-if)#ip helper-address <DHCP_SERVER_IP_ADDRESS>
 ```
-
-> *Ui c'est tout. Bah... quoi de plus ? Il a juste besoin de savoir à qui faire passer les requêtes !*
 
 ## IV. Bonus
 
