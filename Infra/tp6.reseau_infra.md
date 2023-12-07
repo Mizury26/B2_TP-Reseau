@@ -970,3 +970,11 @@ Normalement, il peut joindre sa passerelle, internet, épuicétou.
   - les clients peuvent ping leur passerelle
   - et internet
   - épuicétou
+
+
+Router(config)# access-list 1 permit <votre_passerelle>
+Router(config)# access-list 1 permit any <adresse_de_votre_fournisseur_d'accès>
+Router(config)# access-list 1 deny any
+
+Router(config)# interface <votre_interface> de sortie
+Router(config-if)# ip access-group 1 out
