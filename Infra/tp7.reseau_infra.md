@@ -239,6 +239,82 @@ Minimum Links: 0
   - `r1` doit être prioritaire pour `10.7.10.0/24` et `10.7.20.0/24`
   - `r2` doit être prioritaire pour `10.7.30.0/24`
 
+```bash
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+
+R1(config)#interface FastEthernet0/1.10
+R1(config-subif)# ip address 10.7.10.252 255.255.255.0
+R1(config-subif)# no shutdown
+R1(config-subif)# standby 10 ip 10.7.10.254
+R1(config-subif)# standby 10 priority 150
+R1(config-subif)# standby 10 preempt
+R1(config-subif)#exit
+
+R1(config)#interface FastEthernet0/1.20
+R1(config-subif)# ip address 10.7.20.252 255.255.255.0
+R1(config-subif)# no shutdown
+R1(config-subif)# standby 10 ip 10.7.20.254
+R1(config-subif)# standby 10 priority 150
+R1(config-subif)# standby 10 preempt
+R1(config-subif)#exit
+
+R1(config)#interface FastEthernet0/1.30
+R1(config-subif)# ip address 10.7.30.252 255.255.255.0
+R1(config-subif)# no shutdown
+R1(config-subif)# standby 10 ip 10.7.30.254
+R1(config-subif)# standby 10 priority 100
+R1(config-subif)# standby 10 preempt
+R1(config-subif)#exit
+
+R1(config)#exit
+
+R1#show standby brief
+                     P indicates configured to preempt.
+                     |
+Interface   Grp  Pri P State   Active          Standby         Virtual IP
+Fa0/1.10    10   150 P Active  local           unknown         10.7.10.254
+Fa0/1.20    10   150 P Active  local           unknown         10.7.20.254
+Fa0/1.30    10   100 P Active  local           unknown         10.7.30.254
+```
+```bash
+R2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+
+R2(config)#interface FastEthernet0/1.10
+R2(config-subif)# ip address 10.7.10.253 255.255.255.0
+R2(config-subif)# no shutdown
+R2(config-subif)# standby 10 ip 10.7.10.254
+R2(config-subif)# standby 10 priority 100
+R2(config-subif)# standby 10 preempt
+R2(config-subif)#exit
+
+R2(config)#interface FastEthernet0/1.20
+R2(config-subif)# ip address 10.7.20.253 255.255.255.0
+R2(config-subif)# no shutdown
+R2(config-subif)# standby 10 ip 10.7.20.254
+R2(config-subif)# standby 10 priority 100
+R2(config-subif)# standby 10 preempt
+R2(config-subif)#exit
+
+R2(config)#interface FastEthernet0/1.30
+R2(config-subif)# ip address 10.7.30.253 255.255.255.0
+R2(config-subif)# no shutdown
+R2(config-subif)# standby 10 ip 10.7.30.254
+R2(config-subif)# standby 10 priority 150
+R2(config-subif)# standby 10 preempt
+R2(config-subif)#exit
+
+R2(config)#exit
+
+R2#show standby brief
+                     P indicates configured to preempt.
+                     |
+Interface   Grp  Pri P State   Active          Standby         Virtual IP
+Fa0/1.10    10   100 P Active  local           unknown         10.7.10.254
+Fa0/1.20    10   100 P Active  local           unknown         10.7.20.254
+Fa0/1.30    10   150 P Active  local           unknown         10.7.30.254
+```
 
 ### C. VLAN
 
@@ -252,21 +328,626 @@ Minimum Links: 0
 - sur les routeurs :
   - sous-interface pour permettre le routage inter-VLAN
 
+```bash
+IOU5#sh vlan br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Et1/0, Et1/1, Et1/2, Et1/3
+                                                Et2/0, Et2/1, Et2/2, Et2/3
+                                                Et3/0, Et3/1, Et3/2, Et3/3
+10   clients                          active    Et0/2
+20   admins                           active    Et0/3
+30   servers                          active
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+
+IOU5#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/1       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/1       1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+IOU5#
+```
+```bash
+IOU6#sh vlan br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Et0/3, Et1/0, Et1/1, Et1/2
+                                                Et1/3, Et2/0, Et2/1, Et2/2
+                                                Et2/3, Et3/0, Et3/1, Et3/2
+                                                Et3/3
+10   clients                          active
+20   admins                           active    Et0/2
+30   servers                          active
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+
+IOU6#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/1       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/1       1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+```
+```bash
+IOU7#sh vlan br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Et0/3, Et1/0, Et1/1, Et1/2
+                                                Et1/3, Et2/0, Et2/1, Et2/2
+                                                Et2/3, Et3/0, Et3/1, Et3/2
+                                                Et3/3
+10   clients                          active
+20   admins                           active
+30   servers                          active    Et0/2
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+
+IOU7#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/1       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/1       1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+```
+```bash
+IOU3#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/1       on               802.1q         trunking      1
+Et0/2       on               802.1q         trunking      1
+Et0/3       on               802.1q         trunking      1
+Et1/0       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/1       1-4094
+Et0/2       1-4094
+Et0/3       1-4094
+Et1/0       1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+Et0/2       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+Et0/2       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+```
+```bash
+IOU4#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/1       on               802.1q         trunking      1
+Et0/2       on               802.1q         trunking      1
+Et0/3       on               802.1q         trunking      1
+Et1/0       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/1       1-4094
+Et0/2       1-4094
+Et0/3       1-4094
+Et1/0       1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/1       1,10,20,30
+Et0/2       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       none
+Et0/1       none
+Et0/2       none
+Et0/3       none
+Et1/0       1,10,20,30
+```
+```bash
+IOU1#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/3       on               802.1q         trunking      1
+Et1/0       on               802.1q         trunking      1
+Po1         on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/3       1-4094
+Et1/0       1-4094
+Po1         1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+Po1         1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+Po1         1,10,20,30
+```
+```bash
+IOU2#sh int trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/0       on               802.1q         trunking      1
+Et0/3       on               802.1q         trunking      1
+Et1/0       on               802.1q         trunking      1
+Po1         on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/0       1-4094
+Et0/3       1-4094
+Et1/0       1-4094
+Po1         1-4094
+
+Port        Vlans allowed and active in management domain
+Et0/0       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+Po1         1,10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/0       1,10,20,30
+Et0/3       1,10,20,30
+Et1/0       1,10,20,30
+Po1         none
+```
+```bash
+R1#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            unassigned      YES NVRAM  administratively down down
+FastEthernet0/1            unassigned      YES NVRAM  up                    up
+FastEthernet0/1.10         10.7.10.252     YES NVRAM  up                    up
+FastEthernet0/1.20         10.7.20.252     YES NVRAM  up                    up
+FastEthernet0/1.30         10.7.30.252     YES NVRAM  up                    up
+FastEthernet1/0            unassigned      YES NVRAM  administratively down down
+FastEthernet2/0            unassigned      YES NVRAM  administratively down down
+```
+```bash
+R2#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            unassigned      YES NVRAM  administratively down down
+FastEthernet0/1            unassigned      YES NVRAM  up                    up
+FastEthernet0/1.10         10.7.10.253     YES NVRAM  up                    up
+FastEthernet0/1.20         10.7.20.253     YES NVRAM  up                    up
+FastEthernet0/1.30         10.7.30.253     YES NVRAM  up                    up
+FastEthernet1/0            unassigned      YES NVRAM  administratively down down
+FastEthernet2/0            unassigned      YES NVRAM  administratively down down
+```
 ### D. NAT
 
 ➜ **Config NAT sur les deux routeurs**
 
 - ils doivent permettre de joindre l'extérieur
+```bash
+R1(config)#int fastEthernet0/0
+R1(config-if)#no shut
+R1(config-if)#ip nat outside
+R1(config-if)#exit
 
+R1(config)#int fastEthernet0/1
+R1(config-if)#ip nat inside
+R1(config-if)#exit
+
+R1(config)#int fastEthernet0/1.10
+R1(config-subif)#ip nat inside
+R1(config-subif)#exit
+
+R1(config)#int fastEthernet0/1.20
+R1(config-subif)#ip nat inside
+R1(config-subif)#exit
+
+R1(config)#int fastEthernet0/1.30
+R1(config-subif)#ip nat inside
+R1(config-subif)#exit
+
+R1(config)#access-list 1 permit any
+R1(config)#ip nat inside source list 1 interface fastEthernet0/0 overload
+R1(config)#exit
+```
+```bash
+R2(config)#int fastEthernet0/0
+R2(config-if)#no shut
+R2(config-if)#ip nat outside
+R2(config-if)#exit
+
+R2(config)#int fastEthernet0/1
+R2(config-if)#ip nat inside
+R2(config-if)#exit
+
+R2(config)#int fastEthernet0/1.10
+R2(config-subif)#ip nat inside
+R2(config-subif)#exit
+
+R2(config)#int fastEthernet0/1.20
+R2(config-subif)#ip nat inside
+R2(config-subif)#exit
+
+R2(config)#int fastEthernet0/1.30
+R2(config-subif)#ip nat inside
+R2(config-subif)#exit
+
+R2(config)#access-list 1 permit any
+R2(config)#ip nat inside source list 1 interface fastEthernet0/0 overload
+R2(config)#exit
+```
 ### E. Preuve et rendu
 
 🌞 **`show-run`** sur tous les équipements
+```bash
+R1#sh running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address 192.168.122.124 255.255.255.0
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ no ip address
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 10.7.10.252 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ standby 10 ip 10.7.10.254
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface FastEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 10.7.20.252 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ standby 10 ip 10.7.20.254
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface FastEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 10.7.30.252 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ standby 10 ip 10.7.30.254
+ standby 10 preempt
+!
+interface FastEthernet1/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet0/0 overload
+!
+access-list 1 permit any
+no cdp log mismatch duplex
+!
+```
+```bash
+
+R2#sh running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ no ip address
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 10.7.10.253 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ standby 10 ip 10.7.10.254
+ standby 10 preempt
+!
+interface FastEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 10.7.20.253 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ standby 10 ip 10.7.20.254
+ standby 10 preempt
+!
+interface FastEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 10.7.30.253 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ standby 10 ip 10.7.30.254
+ standby 10 priority 150
+ standby 10 preempt
+!
+interface FastEthernet1/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet0/0 overload
+!
+access-list 1 permit any
+no cdp log mismatch duplex
+```
 
 🌞 **depuis `pc4.tp7.b1`**
 
-- `ping 10.7.10.12`
-- `ping ynov.com`
+- `ping 10.7.20.12`
 
+```bash
+PC4> ping 10.7.20.12
+
+84 bytes from 10.7.20.12 icmp_seq=1 ttl=63 time=29.347 ms
+84 bytes from 10.7.20.12 icmp_seq=2 ttl=63 time=20.614 ms
+```
+- `ping ynov.com`
+```bash
+PC4> ping ynov.com
+ynov.com resolved to 104.26.11.233
+```
+```bash
+IOU1#sh running-config
+Building configuration...
+
+interface Port-channel1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+```
+```bash
+IOU2#sh running-config
+Building configuration...
+
+interface Port-channel1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+```
+```bash
+IOU3#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+```
+```bash
+IOU4#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+```
+```bash
+IOU5#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport access vlan 10
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 20
+ switchport mode access
+!
+```
+```bash
+IOU6#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport access vlan 20
+ switchport mode access
+!
+```
+```bash
+IOU7#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport access vlan 30
+ switchport mode access
+!
+
+```
 ## 3. Bonus
 
 ### A. ACL
