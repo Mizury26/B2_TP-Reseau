@@ -971,10 +971,38 @@ Normalement, il peut joindre sa passerelle, internet, épuicétou.
   - et internet
   - épuicétou
 
+```bash
+R1(config)#access-list 1 permit 10.6.52.1 0.0.0.3
+R1(config)#access-list 1 deny any
 
-Router(config)# access-list 1 permit <votre_passerelle>
-Router(config)# access-list 1 permit any <adresse_de_votre_fournisseur_d'accès>
-Router(config)# access-list 1 deny any
+R1(config)#interface fastEthernet0/0
+R1(config-if)#ip access-group 1 out
+R1(config-if)#exit
 
-Router(config)# interface <votre_interface> de sortie
-Router(config-if)# ip access-group 1 out
+R1(config)#interface fastEthernet0/1
+R1(config-if)#ip access-group 1 out
+R1(config-if)#exit
+```
+```bash
+R2(config)#access-list 1 permit 10.6.52.1 0.0.0.3
+R2(config)#access-list 1 deny any
+
+R2(config)#interface fastEthernet1/0
+R2(config-if)#ip access-group 1 out
+R2(config-if)#exit
+```
+```bash
+R3(config)#access-list 1 permit 10.6.52.1 0.0.0.3
+R3(config)#access-list 1 deny any
+
+R3(config)#interface fastEthernet0/1
+R3(config-if)#ip access-group 1 out
+R3(config-if)#exit
+```
+```bash
+R4(config)#access-list 1 permit 10.6.52.1 0.0.0.3
+R4(config)#access-list 1 deny any
+
+R4(config)#interface fastEthernet0/0
+R4(config-if)#ip access-group 1 out
+```
