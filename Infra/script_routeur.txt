@@ -1,0 +1,87 @@
+conf t
+
+interface fastEthernet0/0
+ip address dhcp
+ip nat outside
+no shut
+exit
+
+interface fastEthernet1/0
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.15
+encapsulation dot1Q 15
+ip addr 10.15.0.254 255.255.255.0
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.25
+encapsulation dot1Q 25
+ip addr 10.25.0.14 255.255.255.240
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.35
+encapsulation dot1Q 35
+ip addr 10.35.0.30 255.255.255.224
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.45
+encapsulation dot1Q 45
+ip addr 10.45.0.254 255.255.255.0
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.55
+encapsulation dot1Q 55
+ip addr 10.55.0.14 255.255.255.240
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.65
+encapsulation dot1Q 65
+ip addr 10.65.0.14 255.255.255.240
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.75
+encapsulation dot1Q 75
+ip addr 10.75.0.14 255.255.255.240
+ip nat inside 
+no shut
+exit
+
+interface fastEthernet1/0.85
+encapsulation dot1Q 85
+ip addr 10.85.0.254 255.255.255.0
+ip nat inside
+no shut
+exit
+
+interface fastEthernet1/0.95
+encapsulation dot1Q 95
+ip addr 10.95.0.14 255.255.255.240
+ip nat inside
+no shut
+exit
+
+
+interface FastEthernet0/1
+ ip addr 10.8.1.2 255.255.255.252
+no shut
+
+exit
+
+access-list 1 permit any
+ip nat inside source list 1 interface fastEthernet0/0 overload
+
+exit
