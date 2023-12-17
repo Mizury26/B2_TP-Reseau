@@ -12,7 +12,6 @@ default-lease-time 600;
 max-lease-time 7200;
 # this DHCP server to be declared valid
 authoritative;
-
 # specify network address and subnetmask
 subnet 10.10.0.0 netmask 255.255.254.0 {
     range dynamic-bootp 10.10.0.1 10.10.1.253;

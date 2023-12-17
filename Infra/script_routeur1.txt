@@ -1,0 +1,95 @@
+conf t
+
+interface FastEthernet0/0
+ ip address dhcp
+ ip nat outside
+no shut
+exit
+
+interface FastEthernet0/1
+ ip address 10.8.1.1 255.255.255.252
+no shut
+exit
+
+interface FastEthernet1/0
+ ip helper-address 10.90.0.2
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.10
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 10
+ ip address 10.10.1.254 255.255.254.0
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.20
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 20
+ ip address 10.20.0.14 255.255.255.240
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.30
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 30
+ ip address 10.30.0.30 255.255.255.224
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.40
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 40
+ ip address 10.40.0.254 255.255.255.0
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.50
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 50
+ ip address 10.50.0.14 255.255.255.240
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.60
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 60
+ ip address 10.60.0.14 255.255.255.240
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.70
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 70
+ ip address 10.70.0.14 255.255.255.240
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.80
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 80
+ ip address 10.80.1.254 255.255.254.0
+ ip nat inside
+no shut
+exit
+
+interface FastEthernet1/0.90
+ ip helper-address 10.90.0.2
+ encapsulation dot1Q 90
+ ip address 10.90.0.14 255.255.255.240
+ ip nat inside
+no shut
+exit
+
+access-list 1 permit any
+ip nat inside source list 1 interface fastEthernet0/0 overload
+
+exit
