@@ -380,9 +380,1092 @@ On est paranos un peu alors il n'y a pas de WiFi dans nos locaux, et on fournit 
 
 - un `show-run` pour les équipements réseau
   - routeurs et switches
+
+```bash
+R1#sh running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.8.1.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ no ip address
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0.10
+ encapsulation dot1Q 10
+ ip address 10.10.1.254 255.255.254.0
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.20
+ encapsulation dot1Q 20
+ ip address 10.20.0.14 255.255.255.240
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.30
+ encapsulation dot1Q 30
+ ip address 10.30.0.30 255.255.255.224
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.40
+ encapsulation dot1Q 40
+ ip address 10.40.0.254 255.255.255.0
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.50
+ encapsulation dot1Q 50
+ ip address 10.50.0.14 255.255.255.240
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.60
+ encapsulation dot1Q 60
+ ip address 10.60.0.14 255.255.255.240
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.70
+ encapsulation dot1Q 70
+ ip address 10.70.0.14 255.255.255.240
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.80
+ encapsulation dot1Q 80
+ ip address 10.80.1.254 255.255.254.0
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.90
+ encapsulation dot1Q 90
+ ip address 10.90.0.14 255.255.255.240
+ ip helper-address 10.90.0.2
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+ip route 10.15.0.0 255.255.255.0 10.8.1.2
+ip route 10.25.0.0 255.255.255.240 10.8.1.2
+ip route 10.35.0.0 255.255.255.224 10.8.1.2
+ip route 10.45.0.0 255.255.255.0 10.8.1.2
+ip route 10.55.0.0 255.255.255.240 10.8.1.2
+ip route 10.65.0.0 255.255.255.240 10.8.1.2
+ip route 10.75.0.0 255.255.255.240 10.8.1.2
+ip route 10.85.0.0 255.255.255.0 10.8.1.2
+ip route 10.95.0.0 255.255.255.240 10.8.1.2
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet0/0 overload
+!
+access-list 1 permit any
+```
+
+```bash
+
+R2#sh running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.8.1.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ no ip address
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0.15
+ encapsulation dot1Q 15
+ ip address 10.15.0.254 255.255.255.0
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.25
+ encapsulation dot1Q 25
+ ip address 10.25.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.35
+ encapsulation dot1Q 35
+ ip address 10.35.0.30 255.255.255.224
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.45
+ encapsulation dot1Q 45
+ ip address 10.45.0.254 255.255.255.0
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.55
+ encapsulation dot1Q 55
+ ip address 10.55.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.65
+ encapsulation dot1Q 65
+ ip address 10.65.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.75
+ encapsulation dot1Q 75
+ ip address 10.75.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.85
+ encapsulation dot1Q 85
+ ip address 10.85.0.254 255.255.255.0
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.95
+ encapsulation dot1Q 95
+ ip address 10.95.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+ip route 0.0.0.0 0.0.0.0 FastEthernet0/1
+ip route 10.10.0.0 255.255.240.0 10.8.1.1
+ip route 10.10.0.0 255.255.254.0 10.8.1.1
+ip route 10.20.0.0 255.255.255.240 10.8.1.1
+ip route 10.30.0.0 255.255.255.224 10.8.1.1
+ip route 10.40.0.0 255.255.255.0 10.8.1.1
+ip route 10.50.0.0 255.255.255.240 10.8.1.1
+ip route 10.60.0.0 255.255.255.240 10.8.1.1
+ip route 10.70.0.0 255.255.255.240 10.8.1.1
+ip route 10.80.0.0 255.255.254.0 10.8.1.1
+ip route 10.90.0.0 255.255.255.240 10.8.1.1
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet0/0 overload
+!
+access-list 1 permit any
+```
+
+```bash
+IOU-O#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+```
+```bash
+Plateforme-O#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet1/0
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet1/1
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet2/0
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet2/1
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet2/2
+ switchport access vlan 40
+ switchport mode access
+!
+interface Ethernet2/3
+ switchport access vlan 40
+ switchport mode access
+!
+```
+```bash
+service-O#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 90
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 90
+ switchport mode access
+!
+```
+
+```bash
+
+RDC#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet1/0
+ switchport access vlan 50
+ switchport mode access
+!
+interface Ethernet1/1
+ switchport access vlan 60
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 80
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 70
+ switchport mode access
+!
+interface Ethernet2/0
+ switchport access vlan 70
+ switchport mode access
+!
+```
+```bash
+E1#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 50
+ switchport mode access
+!
+interface Ethernet1/0
+ switchport access vlan 60
+ switchport mode access
+!
+interface Ethernet1/1
+ switchport access vlan 60
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 70
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 80
+ switchport mode access
+!
+interface Ethernet2/0
+ switchport access vlan 80
+ switchport mode access
+!
+interface Ethernet2/1
+ switchport access vlan 10
+ switchport mode access
+!
+interface Ethernet2/2
+ switchport access vlan 10
+ switchport mode access
+!
+```
+```bash
+E2#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 10
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 10
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet1/0
+ switchport access vlan 50
+ switchport mode access
+!
+interface Ethernet1/1
+ switchport access vlan 60
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 60
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 70
+ switchport mode access
+!
+interface Ethernet2/0
+ switchport access vlan 80
+ switchport mode access
+!
+interface Ethernet2/1
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet2/2
+ switchport access vlan 80
+ switchport mode access
+!
+interface Ethernet2/3
+ switchport access vlan 30
+ switchport mode access
+!
+interface Ethernet3/0
+ switchport access vlan 80
+ switchport mode access
+!
+interface Ethernet3/1
+ switchport access vlan 20
+ switchport mode access
+!
+interface Ethernet3/2
+ switchport access vlan 20
+ switchport mode access
+!
+interface Ethernet3/3
+ switchport access vlan 20
+ switchport mode access
+!
+```
+```bash
+R2#sh running-config
+Building configuration...
+
+interface FastEthernet0/0
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 10.8.1.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ no ip address
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0.15
+ encapsulation dot1Q 15
+ ip address 10.15.0.254 255.255.255.0
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.25
+ encapsulation dot1Q 25
+ ip address 10.25.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.35
+ encapsulation dot1Q 35
+ ip address 10.35.0.30 255.255.255.224
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.45
+ encapsulation dot1Q 45
+ ip address 10.45.0.254 255.255.255.0
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.55
+ encapsulation dot1Q 55
+ ip address 10.55.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.65
+ encapsulation dot1Q 65
+ ip address 10.65.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.75
+ encapsulation dot1Q 75
+ ip address 10.75.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.85
+ encapsulation dot1Q 85
+ ip address 10.85.0.254 255.255.255.0
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet1/0.95
+ encapsulation dot1Q 95
+ ip address 10.95.0.14 255.255.255.240
+ ip helper-address 10.95.0.1
+ ip nat inside
+ ip virtual-reassembly
+!
+interface FastEthernet2/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+ip route 0.0.0.0 0.0.0.0 FastEthernet0/1
+ip route 10.10.0.0 255.255.240.0 10.8.1.1
+ip route 10.10.0.0 255.255.254.0 10.8.1.1
+ip route 10.20.0.0 255.255.255.240 10.8.1.1
+ip route 10.30.0.0 255.255.255.224 10.8.1.1
+ip route 10.40.0.0 255.255.255.0 10.8.1.1
+ip route 10.50.0.0 255.255.255.240 10.8.1.1
+ip route 10.60.0.0 255.255.255.240 10.8.1.1
+ip route 10.70.0.0 255.255.255.240 10.8.1.1
+ip route 10.80.0.0 255.255.254.0 10.8.1.1
+ip route 10.90.0.0 255.255.255.240 10.8.1.1
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface FastEthernet0/0 overload
+!
+access-list 1 permit any
+```
+```bash
+IOU-B#sh running-config
+Building configuration...
+
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+```
+```bash
+Plateforme-B#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 45
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 45
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 45
+ switchport mode access
+!
+```
+```bash
+service-B#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 95
+ switchport mode access
+!
+```
+```bash
+bat1#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 35
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 35
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 25
+ switchport mode access
+!
+interface Ethernet1/0
+ switchport access vlan 25
+ switchport mode access
+!
+interface Ethernet1/1
+ switchport access vlan 55
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 65
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 75
+ switchport mode access
+!
+interface Ethernet2/0
+ switchport access vlan 75
+ switchport mode access
+!
+interface Ethernet2/1
+ switchport access vlan 85
+ switchport mode access
+!
+```
+```bash
+bat2#sh running-config
+Building configuration...
+
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport access vlan 15
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 15
+ switchport mode access
+!
+interface Ethernet0/3
+ switchport access vlan 55
+ switchport mode access
+!
+interface Ethernet1/0
+ switchport access vlan 65
+ switchport mode access
+!
+interface Ethernet1/1
+ switchport access vlan 75
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 75
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 85
+ switchport mode access
+!
+```
+
 - la suite des étapes pour les machines Linux
   - vous ne configurez QUE le serveur DHCP et DNS pour la partie Linux
-  - le reste est simulé avec VPCS ou VM vierge (production, tests, serveur git, etc.)
-- démonstration de skill
-  - si vous avez des confs stylées c'est l'heure de les montrer
-  - élégance, perfs, sécurité, qualité, clarté, on prend tout
+
+### dhcp.ori.meo
+```bash
+[manon@dhcp ~]$ sudo dnf install dhcp-server -y
+```
+```bash
+[manon@dhcp ~]$ sudo cat /etc/dhcp/dhcpd.conf
+[sudo] password for manon:
+# DHCP Server Configuration file.
+# create new
+# specify domain name
+option domain-name     "srv.world";
+# specify DNS server's hostname or IP address
+option domain-name-servers     10.90.0.1;
+# default lease time
+default-lease-time 600;
+# max lease time
+max-lease-time 7200;
+# this DHCP server to be declared valid
+authoritative;
+# specify network address and subnetmask
+subnet 10.10.0.0 netmask 255.255.254.0 {
+    range dynamic-bootp 10.10.0.1 10.10.1.253;
+    option broadcast-address 10.10.1.255;
+    option routers 10.10.1.254;
+}
+
+subnet 10.20.0.0 netmask 255.255.255.240 {
+    range dynamic-bootp 10.20.0.1 10.20.0.13;
+    option broadcast-address 10.20.0.15;
+    option routers 10.20.0.14;
+}
+
+subnet 10.30.0.0 netmask 255.255.224.0 {
+    range dynamic-bootp 10.30.0.1 10.30.0.29;
+    option broadcast-address 10.30.0.31;
+    option routers 10.30.0.30;
+}
+
+subnet 10.40.0.0 netmask 255.255.255.0 {
+    range dynamic-bootp 10.40.0.1 10.40.0.253;
+    option broadcast-address 10.40.0.255;
+    option routers 10.40.0.254;
+}
+
+subnet 10.50.0.0 netmask 255.255.255.240 {
+    range dynamic-bootp 10.50.0.1 10.50.0.13;
+    option broadcast-address 10.50.0.15;
+    option routers 10.50.0.14;
+}
+
+subnet 10.60.0.0 netmask 255.255.255.240 {
+    range dynamic-bootp 10.60.0.1 10.60.0.13;
+    option broadcast-address 10.60.0.15;
+    option routers 10.60.0.14;
+}
+
+subnet 10.70.0.0 netmask 255.255.255.240 {
+    range dynamic-bootp 10.70.0.1 10.70.0.13;
+    option broadcast-address 10.70.0.15;
+    option routers 10.70.0.14;
+}
+
+subnet 10.80.0.0 netmask 255.255.254.0 {
+    range dynamic-bootp 10.80.0.1 10.80.1.253;
+    option broadcast-address 10.80.1.255;
+    option routers 10.80.1.254;
+}
+
+subnet 10.90.0.0 netmask 255.255.255.240 {
+    range dynamic-bootp 10.90.0.1 10.90.0.13;
+    option broadcast-address 10.90.0.15;
+    option routers 10.90.0.14;
+}
+```
+```bash
+[manon@dhcp ~]$ sudo systemctl enable --now dhcpd
+[manon@dhcp ~]$ sudo firewall-cmd --add-service=dhcp
+success
+[manon@dhcp ~]$ sudo firewall-cmd --runtime-to-permanent
+success
+[manon@dhcp ~]$ systemctl status dhcpd
+● dhcpd.service - DHCPv4 Server Daemon
+     Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; enabled; preset: disabled)
+     Active: active (running) since Tue 2023-12-19 18:47:56 CET; 2h 55min ago
+       Docs: man:dhcpd(8)
+             man:dhcpd.conf(5)
+   Main PID: 803 (dhcpd)
+     Status: "Dispatching packets..."
+      Tasks: 1 (limit: 11038)
+     Memory: 7.6M
+        CPU: 10ms
+     CGroup: /system.slice/dhcpd.service
+             └─803 /usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid
+
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]:
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]: No subnet declaration for enp0s3 (no IPv4 addresses).
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]: ** Ignoring requests on enp0s3.  If this is not what
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]:    you want, please write a subnet declaration
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]:    in your dhcpd.conf file for the network segment
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]:    to which interface enp0s3 is attached. **
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]:
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]: Sending on   Socket/fallback/fallback-net
+Dec 19 18:47:56 dhcp.ori.meo dhcpd[803]: Server starting service.
+Dec 19 18:47:56 dhcp.ori.meo systemd[1]: Started DHCPv4 Server Daemon.
+```
+
+### dhcp.bey.meo
+```bash
+[manon@dhcp ~]$ sudo systemctl enable --now dhcpd
+[manon@dhcp ~]$ sudo firewall-cmd --add-service=dhcp
+success
+[manon@dhcp ~]$ sudo firewall-cmd --runtime-to-permanent
+success
+[manon@dhcp ~]$ systemctl status dhcpd
+● dhcpd.service - DHCPv4 Server Daemon
+     Loaded: loaded (/usr/lib/systemd/system/dhcpd.service; enabled; preset: disabled)
+     Active: active (running) since Tue 2023-12-19 19:06:56 CET; 2h 39min ago
+       Docs: man:dhcpd(8)
+             man:dhcpd.conf(5)
+   Main PID: 801 (dhcpd)
+     Status: "Dispatching packets..."
+      Tasks: 1 (limit: 11038)
+     Memory: 7.4M
+        CPU: 20ms
+     CGroup: /system.slice/dhcpd.service
+             └─801 /usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid
+
+Dec 19 21:23:40 dhcp.bey.meo dhcpd[801]: DHCPREQUEST for 10.85.0.1 (10.95.0.1) from 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:23:40 dhcp.bey.meo dhcpd[801]: DHCPACK on 10.85.0.1 to 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:28:42 dhcp.bey.meo dhcpd[801]: DHCPREQUEST for 10.85.0.1 (10.95.0.1) from 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:28:42 dhcp.bey.meo dhcpd[801]: DHCPACK on 10.85.0.1 to 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:33:43 dhcp.bey.meo dhcpd[801]: DHCPREQUEST for 10.85.0.1 (10.95.0.1) from 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:33:43 dhcp.bey.meo dhcpd[801]: DHCPACK on 10.85.0.1 to 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:38:44 dhcp.bey.meo dhcpd[801]: DHCPREQUEST for 10.85.0.1 (10.95.0.1) from 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:38:44 dhcp.bey.meo dhcpd[801]: DHCPACK on 10.85.0.1 to 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:43:46 dhcp.bey.meo dhcpd[801]: DHCPREQUEST for 10.85.0.1 (10.95.0.1) from 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+Dec 19 21:43:46 dhcp.bey.meo dhcpd[801]: DHCPACK on 10.85.0.1 to 00:50:79:66:68:34 (tel1.bey.meo) via 10.85.0.254
+```
+
+### dns.ori.meo
+```bash
+[manon@dhcp ~]$ sudo dnf install -y bind bind-utils
+```
+```bash
+[manon@dns etc]$ sudo cat /etc/named.conf
+[sudo] password for manon:
+options {
+        listen-on port 53 {any; };
+        listen-on-v6 port 53 { ::1; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        secroots-file   "/var/named/data/named.secroots";
+        recursing-file  "/var/named/data/named.recursing";
+        allow-query     { any; };
+
+        /*
+         - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+         - If you are building a RECURSIVE (caching) DNS server, you need to enable
+           recursion.
+         - If your recursive DNS server has a public IP address, you MUST enable access
+           control to limit queries to your legitimate users. Failing to do so will
+           cause your server to become part of large scale DNS amplification
+           attacks. Implementing BCP38 within your network would greatly
+           reduce such attack surface
+        */
+        recursion yes;
+
+        allow-new-zones yes;
+        dnssec-validation yes;
+
+        managed-keys-directory "/var/named/dynamic";
+        geoip-directory "/usr/share/GeoIP";
+
+        pid-file "/run/named/named.pid";
+        session-keyfile "/run/named/session.key";
+
+        /* https://fedoraproject.org/wiki/Changes/CryptoPolicy */
+        include "/etc/crypto-policies/back-ends/bind.config";
+};
+
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+zone "ori.meo" IN {
+        type master;
+        file "ori.meo.db";
+        allow-update {none;};
+        allow-query {any;};
+};
+zone "bey.meo" IN {
+        type master;
+        file "bey.meo.db";
+        allow-update {none;};
+        allow-query {any;};
+};
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";
+```
+```bash
+[manon@dns etc]$ sudo cat /var/named/ori.meo.db
+$TTL 86400
+@ IN SOA dns.ori.meo. admin.ori.meo. (
+    2019061800 ;Serial
+    3600 ;Refresh
+    1800 ;Retry
+    604800 ;Expire
+    86400 ;Minimum TTL
+)
+
+; Infos sur le serveur DNS lui-même (NS = NameServer)
+@ IN NS dns.ori.meo.
+
+; Enregistrements DNS pour faire correspondre des noms à des IPs
+dns           IN A 10.90.0.1
+testserv1     IN A 10.40.0.1
+testserv30    IN A 10.40.0.2
+testdb        IN A 10.40.0.3
+prodserv1     IN A 10.40.0.4
+prodserv2     IN A 10.40.0.5
+proddb        IN A 10.40.0.6
+gitserv       IN A 10.40.0.7
+dhcp          IN A 10.90.0.2
+```
+```bash
+[manon@dns etc]$ sudo cat /var/named/bey.meo.db
+$TTL 86400
+@ IN SOA dns.ori.meo. admin.ori.meo. (
+    2019061800 ;Serial
+    3600 ;Refresh
+    1800 ;Retry
+    604800 ;Expire
+    86400 ;Minimum TTL
+)
+
+; Infos sur le serveur DNS lui même (NS = NameServer)
+@ IN NS dns.ori.meo.
+
+; Enregistrements DNS pour faire correspondre des noms à des IPs
+dns           IN A 10.95.0.1
+testserv1     IN A 10.45.0.1
+testserv30    IN A 10.45.0.2
+testdb        IN A 10.45.0.3
+dhcp          IN A 10.95.0.1
+```
+```bash
+[manon@dns etc]$ sudo firewall-cmd --permanent --add-service=dns
+[manon@dns etc]$ sudo firewall-cmd --permanent --add-port=53/tcp
+success
+[manon@dns etc]$ sudo firewall-cmd --permanent --add-port=53/udp
+success
+[manon@dns etc]$ sudo firewall-cmd --reload
+successs
+```
+
+### Test
+```bash
+proddb.ori.meo> ip dhcp
+DDORA IP 10.40.0.6/24 GW 10.40.0.254
+
+proddb.ori.meo> sh ip
+
+NAME        : proddb.ori.meo
+IP/MASK     : 10.40.0.6/24
+GATEWAY     : 10.40.0.254
+DNS         : 10.90.0.1
+DHCP SERVER : 10.90.0.2
+DHCP LEASE  : 500, 600/300/525
+DOMAIN NAME : srv.world
+MAC         : 00:50:79:66:68:06
+LPORT       : 20174
+RHOST:PORT  : 127.0.0.1:20175
+MTU         : 1500
+
+```
+```bash
+pdg.ori.meo> ip dhcp
+DDORA IP 10.30.0.2/19 GW 10.30.0.30
+
+pdg.ori.meo> sh ip
+
+NAME        : pdg.ori.meo
+IP/MASK     : 10.30.0.1/19
+GATEWAY     : 10.30.0.30
+DNS         : 10.90.0.1
+DHCP SERVER : 10.90.0.2
+DHCP LEASE  : 590, 600/300/525
+DOMAIN NAME : srv.world
+MAC         : 00:50:79:66:68:17
+LPORT       : 20172
+RHOST:PORT  : 127.0.0.1:20173
+MTU         : 1500
+```
+```bash
+pdg.ori.meo> ping gitserv.ori.meo
+gitserv.ori.meo resolved to 10.40.0.7
+
+84 bytes from 10.40.0.7 icmp_seq=1 ttl=63 time=29.904 ms
+84 bytes from 10.40.0.7 icmp_seq=2 ttl=63 time=21.262 ms
+84 bytes from 10.40.0.7 icmp_seq=3 ttl=63 time=18.649 ms
+```
+```bash
+pdg.ori.meo> ping ynov.com
+ynov.com resolved to 172.67.74.226
+```
+```bash
+tel1.bey.meo> ip dhcp
+DORA IP 10.85.0.1/24 GW 10.85.0.254
+
+tel1.bey.meo> sh ip
+
+NAME        : tel1.bey.meo[1]
+IP/MASK     : 10.85.0.1/24
+GATEWAY     : 10.85.0.254
+DNS         : 10.90.0.1
+DHCP SERVER : 10.95.0.1
+DHCP LEASE  : 463, 491/245/429
+DOMAIN NAME : srv.world
+MAC         : 00:50:79:66:68:34
+LPORT       : 20164
+RHOST:PORT  : 127.0.0.1:20165
+MTU         : 1500
+```
+```bash
+tel1.bey.meo> ping gitserv.ori.meo
+gitserv.ori.meo resolved to 10.40.0.7
+
+84 bytes from 10.40.0.7 icmp_seq=1 ttl=62 time=40.837 ms
+84 bytes from 10.40.0.7 icmp_seq=2 ttl=62 time=37.032 ms
+```
+```bash
+tel1.bey.meo> ping youtube.com
+youtube.com resolved to 142.250.178.142
+```
